@@ -6,11 +6,9 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-
 import com.google.common.collect.Multimap;
 import me.kteq.hiddenarmor.HiddenArmor;
 import me.kteq.hiddenarmor.manager.HiddenArmorManager;
-
 import me.kteq.hiddenarmor.util.ItemUtil;
 import me.kteq.hiddenarmor.util.StrUtil;
 import org.apache.commons.lang.WordUtils;
@@ -31,7 +29,7 @@ public class ArmorSelfPacketListener {
     private final HiddenArmor plugin;
     private final HiddenArmorManager hiddenArmorManager;
 
-    public ArmorSelfPacketListener(HiddenArmor plugin, ProtocolManager manager){
+    public ArmorSelfPacketListener(HiddenArmor plugin, ProtocolManager manager) {
         this.plugin = plugin;
         this.hiddenArmorManager = plugin.getHiddenArmorManager();
 
@@ -44,20 +42,20 @@ public class ArmorSelfPacketListener {
             public void onPacketSending(PacketEvent event) {
                 PacketContainer packet = event.getPacket();
                 Player player = event.getPlayer();
-                if(!hiddenArmorManager.isArmorHidden(player)) return;
+                if (!hiddenArmorManager.isArmorHidden(player)) return;
 
 
-                if(packet.getType().equals(PacketType.Play.Server.SET_SLOT) && packet.getIntegers().read(0).equals(0) && packet.getIntegers().read(ArmorSelfPacketListener.this.plugin.isOld() ? 1 : 2) > 4 && packet.getIntegers().read(ArmorSelfPacketListener.this.plugin.isOld() ? 1 : 2) < 9){
+                if (packet.getType().equals(PacketType.Play.Server.SET_SLOT) && packet.getIntegers().read(0).equals(0) && packet.getIntegers().read(ArmorSelfPacketListener.this.plugin.isOld() ? 1 : 2) > 4 && packet.getIntegers().read(ArmorSelfPacketListener.this.plugin.isOld() ? 1 : 2) < 9) {
                     ItemStack itemStack = packet.getItemModifier().read(0);
-                    if(itemStack != null) {
+                    if (itemStack != null) {
                         packet.getItemModifier().write(0, getHiddenArmorPiece(itemStack));
                     }
                 }
 
-                if(packet.getType().equals(PacketType.Play.Server.WINDOW_ITEMS) && packet.getIntegers().read(0).equals(0)){
+                if (packet.getType().equals(PacketType.Play.Server.WINDOW_ITEMS) && packet.getIntegers().read(0).equals(0)) {
                     List<ItemStack> itemStacks = packet.getItemListModifier().read(0);
                     itemStacks.stream().skip(5).limit(4).forEach(itemStack -> {
-                        if(itemStack != null) {
+                        if (itemStack != null) {
                             itemStack.setItemMeta(getHiddenArmorPiece(itemStack).getItemMeta());
                         }
                     });
@@ -68,26 +66,26 @@ public class ArmorSelfPacketListener {
     }
 
     public ItemStack getHiddenArmorPiece(ItemStack itemStack) {
-        if(itemStack.getType().equals(Material.AIR)) return itemStack;
+        if (itemStack.getType().equals(Material.AIR)) return itemStack;
 
         ItemMeta itemMeta = itemStack.getItemMeta().clone();
         List<String> lore;
-        if(itemMeta.hasLore())
+        if (itemMeta.hasLore())
             lore = itemMeta.getLore();
         else
             lore = new ArrayList<>();
 
         String durability = getPieceDurability(itemStack);
-        if(durability != null) lore.add(durability);
+        if (durability != null) lore.add(durability);
 
-        if(itemStack.getType().equals(Material.ELYTRA)){
+        if (itemStack.getType().equals(Material.ELYTRA)) {
             itemMeta = getHiddenElytraMeta(itemStack);
         }
 
         Material button = getArmorButtonMaterial(itemStack);
-        if(button != null){
+        if (button != null) {
             String name = getPieceName(itemStack);
-            if(name != null) itemMeta.setDisplayName(name);
+            if (name != null) itemMeta.setDisplayName(name);
             itemStack.setType(button);
         }
 
@@ -108,7 +106,7 @@ public class ArmorSelfPacketListener {
 
         itemMeta = itemStack.getItemMeta();
 
-        for(Enchantment key : encs.keySet()){
+        for (Enchantment key : encs.keySet()) {
             itemMeta.addEnchant(key, encs.get(key), true);
         }
 
@@ -120,43 +118,43 @@ public class ArmorSelfPacketListener {
     }
 
     private Material getArmorButtonMaterial(ItemStack armor) {
-        if(!ItemUtil.isArmor(armor)) return null;
+        if (!ItemUtil.isArmor(armor)) return null;
         FileConfiguration config = plugin.getConfig();
 
         String m = armor.getType().toString();
-        if(m.startsWith("NETHERITE_"))
+        if (m.startsWith("NETHERITE_"))
             return Material.POLISHED_BLACKSTONE_BUTTON;
-        if(m.startsWith("DIAMOND_"))
+        if (m.startsWith("DIAMOND_"))
             return Material.WARPED_BUTTON;
-        if(m.startsWith("GOLDEN_"))
+        if (m.startsWith("GOLDEN_"))
             return Material.BIRCH_BUTTON;
-        if(m.startsWith("IRON_"))
+        if (m.startsWith("IRON_"))
             return Material.STONE_BUTTON;
-        if(m.startsWith("LEATHER_") && !config.getBoolean("ignore.leather-armor"))
+        if (m.startsWith("LEATHER_") && !config.getBoolean("ignore.leather-armor"))
             return Material.ACACIA_BUTTON;
-        if(m.startsWith("CHAINMAIL_"))
+        if (m.startsWith("CHAINMAIL_"))
             return Material.JUNGLE_BUTTON;
-        if(m.startsWith("TURTLE_") && !config.getBoolean("ignore.turtle-helmet"))
+        if (m.startsWith("TURTLE_") && !config.getBoolean("ignore.turtle-helmet"))
             return Material.CRIMSON_BUTTON;
         return null;
     }
 
-    private String getPieceDurability(ItemStack itemStack){
+    private String getPieceDurability(ItemStack itemStack) {
         int percentage = ItemUtil.getDurabilityPercentage(itemStack);
-        if(percentage != -1){
+        if (percentage != -1) {
             String color = "&e";
-            if(percentage>=70) color = "&a";
-            if(percentage<30) color = "&c";
-            return StrUtil.color("&fDurability: "+ color + percentage +"%");
+            if (percentage >= 70) color = "&a";
+            if (percentage < 30) color = "&c";
+            return StrUtil.color("&fDurability: " + color + percentage + "%");
         }
         return null;
     }
 
-    private String getPieceName(ItemStack itemStack){
+    private String getPieceName(ItemStack itemStack) {
         String name = itemStack.getType().toString();
         name = name.replaceAll("_", " ");
         name = WordUtils.capitalizeFully(name);
-        if(itemStack.getItemMeta().hasDisplayName())
+        if (itemStack.getItemMeta().hasDisplayName())
             name = itemStack.getItemMeta().getDisplayName() + StrUtil.color(" &r&8(") + name + ")";
         else
             name = StrUtil.color("&r") + name;

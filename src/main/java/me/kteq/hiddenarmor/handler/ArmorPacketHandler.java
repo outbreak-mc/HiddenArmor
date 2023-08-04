@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class ArmorPacketHandler {
@@ -20,7 +19,8 @@ public class ArmorPacketHandler {
     private HiddenArmor plugin;
     private ProtocolManager protocolManager;
 
-    private ArmorPacketHandler() {}
+    private ArmorPacketHandler() {
+    }
 
     public static ArmorPacketHandler getInstance() {
         if (instance == null) {
@@ -42,20 +42,20 @@ public class ArmorPacketHandler {
 
     public void updateSelf(Player player) {
         PlayerInventory inv = player.getInventory();
-        for(int i = 5; i<=8;i++){
+        for (int i = 5; i <= 8; i++) {
             PacketContainer packetSelf = protocolManager.createPacket(PacketType.Play.Server.SET_SLOT);
             packetSelf.getIntegers().write(0, 0);
-            if(!plugin.isOld())
+            if (!plugin.isOld())
                 packetSelf.getIntegers().write(2, i);
             else
-                packetSelf.getIntegers().write(1,i);
+                packetSelf.getIntegers().write(1, i);
             ItemStack armor = ProtocolUtil.getArmor(ProtocolUtil.ArmorType.getType(i), inv);
             packetSelf.getItemModifier().write(0, armor);
-            try {
-                protocolManager.sendServerPacket(player, packetSelf);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+//            try {
+            protocolManager.sendServerPacket(player, packetSelf);
+//            } catch (InvocationTargetException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
