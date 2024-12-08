@@ -1,5 +1,5 @@
 # +- - - - - - - - - - - - - - - - - -+
-# | HiddenArmor - Configuration File  |
+# | HiddenArmorPlugin - Configuration File  |
 # +- - - - - - - - - - - - - - - - - -+
 
 # Invisibility potion effect related section
@@ -31,11 +31,14 @@ default-permissions:
   # Permission: hiddenarmor.toggle.other
   toggle-other: false
 
+temporary-ignore:
+  hide-after-millis: 5000
+
+  # Show armor when the player takes or deals damage
+  combat: true
+
 # Language related settings. Language files are located in the 'locale' folder inside de plugin folder.
-locale:
-  # By default, the plugin will use the client's language when sending them messages, but if there is no locale file
-  # for its language, the plugin will use the default locale set in this option.
-  default-locale: 'en-us'
+locale: 'ru'
 
 # Used to inform when a new config update is available, don't change this
 config-version: 2

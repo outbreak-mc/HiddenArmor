@@ -7,11 +7,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
-
-import me.kteq.hiddenarmor.HiddenArmor;
-import me.kteq.hiddenarmor.manager.HiddenArmorManager;
+import me.kteq.hiddenarmor.HiddenArmorManager;
+import me.kteq.hiddenarmor.HiddenArmorPlugin;
 import me.kteq.hiddenarmor.util.ItemUtil;
-
 import me.kteq.hiddenarmor.util.ProtocolUtil;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,11 +20,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class ArmorOthersPacketListener {
-    private final HiddenArmor plugin;
+    private final HiddenArmorPlugin plugin;
     private final FileConfiguration config;
     private final HiddenArmorManager hiddenArmorManager;
 
-    public ArmorOthersPacketListener(HiddenArmor plugin, ProtocolManager manager) {
+    public ArmorOthersPacketListener(HiddenArmorPlugin plugin, ProtocolManager manager) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
         this.hiddenArmorManager = plugin.getHiddenArmorManager();
@@ -37,18 +35,17 @@ public class ArmorOthersPacketListener {
                 Player player = event.getPlayer();
 
                 LivingEntity livingEntity = (LivingEntity) manager.getEntityFromID(player.getWorld(), packet.getIntegers().read(0));
-                if(!(livingEntity instanceof Player)) return;
+                if (!(livingEntity instanceof Player)) return;
                 Player packetPlayer = (Player) livingEntity;
 
-                if(!hiddenArmorManager.isArmorHidden(packetPlayer)) return;
+                if (!hiddenArmorManager.shouldCurrentlyHideArmor(packetPlayer)) return;
 
                 List<Pair<EnumWrappers.ItemSlot, ItemStack>> pairList = packet.getSlotStackPairLists().read(0);
 
                 pairList.stream().filter(ProtocolUtil::isArmorSlot).forEach(slotPair -> {
-                    if(slotPair.getSecond().getType().equals(Material.ELYTRA) && ((packetPlayer.isGliding() || config.getBoolean("ignore.elytra")) && !packetPlayer.isInvisible())){
+                    if (slotPair.getSecond().getType().equals(Material.ELYTRA) && ((packetPlayer.isGliding() || config.getBoolean("ignore.elytra")) && !packetPlayer.isInvisible())) {
                         slotPair.setSecond(new ItemStack(Material.ELYTRA));
-                    }
-                    else if(!ignore(slotPair.getSecond()))
+                    } else if (!ignore(slotPair.getSecond()))
                         slotPair.setSecond(new ItemStack(Material.AIR));
                 });
                 packet.getSlotStackPairLists().write(0, pairList);

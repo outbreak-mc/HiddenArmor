@@ -7,11 +7,10 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.google.common.collect.Multimap;
-import me.kteq.hiddenarmor.HiddenArmor;
-import me.kteq.hiddenarmor.manager.HiddenArmorManager;
+import me.kteq.hiddenarmor.HiddenArmorManager;
+import me.kteq.hiddenarmor.HiddenArmorPlugin;
 import me.kteq.hiddenarmor.util.ItemUtil;
 import me.kteq.hiddenarmor.util.StrUtil;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -23,13 +22,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ArmorSelfPacketListener {
-    private final HiddenArmor plugin;
+    private final HiddenArmorPlugin plugin;
     private final HiddenArmorManager hiddenArmorManager;
 
-    public ArmorSelfPacketListener(HiddenArmor plugin, ProtocolManager manager) {
+    public ArmorSelfPacketListener(HiddenArmorPlugin plugin, ProtocolManager manager) {
         this.plugin = plugin;
         this.hiddenArmorManager = plugin.getHiddenArmorManager();
 
@@ -42,7 +42,7 @@ public class ArmorSelfPacketListener {
             public void onPacketSending(PacketEvent event) {
                 PacketContainer packet = event.getPacket();
                 Player player = event.getPlayer();
-                if (!hiddenArmorManager.isArmorHidden(player)) return;
+                if (!hiddenArmorManager.shouldCurrentlyHideArmor(player)) return;
 
 
                 if (packet.getType().equals(PacketType.Play.Server.SET_SLOT) && packet.getIntegers().read(0).equals(0) && packet.getIntegers().read(ArmorSelfPacketListener.this.plugin.isOld() ? 1 : 2) > 4 && packet.getIntegers().read(ArmorSelfPacketListener.this.plugin.isOld() ? 1 : 2) < 9) {
@@ -153,7 +153,7 @@ public class ArmorSelfPacketListener {
     private String getPieceName(ItemStack itemStack) {
         String name = itemStack.getType().toString();
         name = name.replaceAll("_", " ");
-        name = WordUtils.capitalizeFully(name);
+        name = name.toUpperCase(Locale.ROOT);
         if (itemStack.getItemMeta().hasDisplayName())
             name = itemStack.getItemMeta().getDisplayName() + StrUtil.color(" &r&8(") + name + ")";
         else

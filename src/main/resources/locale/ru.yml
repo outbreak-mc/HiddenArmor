@@ -1,0 +1,14 @@
+placeholders:
+  prefix: <gray>[<gradient:#42D4FB:#5BF4EF>HiddenArmor</gradient>]:</gray>
+
+visibility:
+  for-self: "<gray>Ваша броня %visibility%"
+  for-other: "<gray>Броня игрока <white>%player%</white> %visibility%"
+  hidden: "<gradient:#4DC37C:#56FB71><b>скрыта</gradient>"
+  shown: "<gradient:#FB4A4A:#FF7764><b>показана</gradient>"
+console-togglearmor-warning: "To use this command in console, you must specify the player name."
+reloaded: "%prefix% <green>Конфигурация перезагружена"
+command-delay: "<red>Подождите немного, перед тем, как выполнять эту команду снова"
+unknown-player: "<red>Игрок <gold>%player%</gold> не найден!"
+nothing-changed: "<gray>Изменений нет."
+armor-will-reappear-permission-warning: "<gold>Вы скрыли броню <yellow>%player%</yellow>, но этот игрок не имеет прав на скрытие брони, так что его броня появится снова после перезахода."
