@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "me.kteq.hiddenarmor"
-version = "2.0.0"
+version = "2.0.1"
 description = "HiddenArmor"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
