@@ -87,15 +87,13 @@ class HiddenArmorCommands(
         }
     }
 
-    val db: HiddenArmorDB get() = plugin.hiddenArmorManager.db
+    private val db: HiddenArmorDB get() = plugin.hiddenArmorManager.db
 
     init {
         val targetArg = StringArgument("target").replaceSuggestions(
             ArgumentSuggestions.stringsAsync { info: SuggestionInfo<CommandSender> ->
                 CompletableFuture.supplyAsync {
                     val out = mutableListOf<String>()
-
-                    println("last arg: ${info.previousArgs[info.previousArgs.count() - 1]}")
                     when (info.previousArgs[info.previousArgs.count() - 1]) {
                         SHOW -> {
                             for (row in db.search("%${info.currentArg.replace("_", "\\_")}%"))
@@ -126,7 +124,7 @@ class HiddenArmorCommands(
         val toggleArmorCommand = CommandAPICommand("togglearmor")
             .withPermission(Permission.TOGGLE)
             .withOptionalArguments(
-                MultiLiteralArgument("status", listOf(SHOW, HIDE, TOGGLE)),
+                MultiLiteralArgument("status", SHOW, HIDE, TOGGLE),
                 targetArg.withPermission(Permission.TOGGLE_OTHER),
                 BooleanArgument("silent").withPermission(Permission.TOGGLE_OTHER)
             )

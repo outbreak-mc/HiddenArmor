@@ -3,7 +3,6 @@ package me.kteq.hiddenarmor
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import dev.jorel.commandapi.CommandAPI
-import dev.jorel.commandapi.CommandAPIBukkitConfig
 import me.kteq.hiddenarmor.db.HiddenArmorDB
 import me.kteq.hiddenarmor.handler.ArmorPacketHandler
 import me.kteq.hiddenarmor.listener.*
@@ -32,10 +31,6 @@ class HiddenArmorPlugin : JavaPlugin() {
 
     var isOld = false
         private set
-
-    override fun onLoad() {
-        CommandAPI.onLoad(CommandAPIBukkitConfig(this).shouldHookPaperReload(true).silentLogs(true))
-    }
 
     override fun onEnable() {
         saveDefaultConfig()

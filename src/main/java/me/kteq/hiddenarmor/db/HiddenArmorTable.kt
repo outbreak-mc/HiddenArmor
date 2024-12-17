@@ -1,8 +1,7 @@
 package me.kteq.hiddenarmor.db
 
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.dao.id.UUIDTable
 
-object HiddenArmorTable : IntIdTable() {
-    val uuid = varchar("uuid", 36).uniqueIndex()
+object HiddenArmorTable : UUIDTable() {
     val name = varchar("name", 64).uniqueIndex()
 }
